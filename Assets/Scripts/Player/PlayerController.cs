@@ -5,7 +5,8 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [Header("Player constants")]
-    [SerializeField] private float _forcePower;
+    [SerializeField] private float _acceleration;
+    [SerializeField] private float _maxSpeed;
     [SerializeField] private float _rotationSpeed;
 
     [Space]
@@ -25,7 +26,13 @@ public class PlayerController : MonoBehaviour
         _shootingController = GetComponent<ShootingController>();
     }
 
-    void FixedUpdate()
+    private void Update()
+    {
+        if (Input.GetKeyDown(_shooting))
+            _shootingController.Shoot();
+    }
+
+    private void FixedUpdate()
     {
         if (Input.GetKey(_forwardAcceleration))
             AddForce();
@@ -34,12 +41,16 @@ public class PlayerController : MonoBehaviour
             RotateLeft();
         else if (Input.GetKey(_rightRotation))
             RotateRight();
-        else if (Input.GetKeyDown(_shooting))
-            _shootingController.Shoot();
-
+        
     }
 
-    private void AddForce() => _playerRigidbody.AddForce(transform.up * _forcePower, ForceMode2D.Force);
+    private void AddForce()
+    {
+        if (_playerRigidbody.velocity.magnitude <= _maxSpeed)
+            _playerRigidbody.AddForce(transform.up * _acceleration, ForceMode2D.Force);
+        else
+            _playerRigidbody.velocity = _playerRigidbody.velocity.normalized * _maxSpeed;
+    }
 
     private void RotateLeft() => transform.Rotate(0, 0, 1 * _rotationSpeed);
 

@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class BoundChecker : MonoBehaviour
 {
-    [SerializeField] private OutOfBoundsObjectType _objectType; 
+    [SerializeField] private OutOfBoundsObjectType _objectType;
+    [SerializeField] private PoolType _poolType;
 
     private Vector2 _sceneSize;
     private SpriteRenderer _spriteRenderer;
@@ -74,7 +75,10 @@ public class BoundChecker : MonoBehaviour
         }
     }
 
-    private void Destroy() => Destroy(gameObject);
+    private void Destroy()
+    {
+        ObjectPooler.Instance.ReturnToPool(_poolType, gameObject);
+    }
 }
 
 public enum OutOfBoundsObjectType
