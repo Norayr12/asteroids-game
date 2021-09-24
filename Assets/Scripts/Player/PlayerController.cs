@@ -40,8 +40,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(_leftRotation))
             RotateLeft();
         else if (Input.GetKey(_rightRotation))
-            RotateRight();
-        
+            RotateRight();       
     }
 
     private void AddForce()

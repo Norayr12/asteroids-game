@@ -2,45 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Asteroid : MonoBehaviour
-{
-    [Header("Asteroid settings")]
-    [SerializeField] private Range _speedRange;
-    [SerializeField] private float _rotationValue;
+public class Asteroid : MonoBehaviour //, IDestroyable
+{   
+    public AsteroidType AsteroidType { get; set; } = AsteroidType.Big;
 
-    private SpriteRenderer _spriteRenderer;
-    private AsteroidType _asteroidType = AsteroidType.Big;
-
-    public AsteroidType AsteroidType
+    public void Destroy()
     {
-        get
-        {
-            return _asteroidType;
-        }
-        set
-        {
-            _asteroidType = value;
-        }
-    }
-
-    private void Awake()
-    {
-        _spriteRenderer = GetComponent<SpriteRenderer>();
-        _spriteRenderer.sprite = GameData.Config.Shapes[Random.Range(0, GameData.Config.Shapes.Length - 1)];
+        throw new System.NotImplementedException();
     }
 
     public void Initialize(Vector3 scale)
     {
-
+        transform.localScale = scale;
     }
 
-}
-
-[System.Serializable]
-public class Range
-{
-    public float Min;
-    public float Max;
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        GameController.Instance.SplitAsteroid(gameObject);
+    }
 }
 
 public enum AsteroidType
@@ -50,3 +29,10 @@ public enum AsteroidType
     Small
 }
 
+
+[System.Serializable]
+public class Range
+{
+    public float Min;
+    public float Max;
+}

@@ -16,10 +16,7 @@ public class ObjectPooler : MonoBehaviour
     {
         if (Instance == null)
             Instance = this;
-    }
 
-    private void Start()
-    {
         _poolDictionary = new Dictionary<PoolType, Queue<GameObject>>();
 
         foreach (Pool pool in _pools)
@@ -40,12 +37,13 @@ public class ObjectPooler : MonoBehaviour
 
     public GameObject GetFromPool(PoolType type, Vector2 position, Quaternion rotation)
     {
-        GameObject objectFromPool =  _poolDictionary[type].Dequeue();
+        GameObject objectFromPool = _poolDictionary[type].Dequeue();
 
         objectFromPool.transform.position = position;
         objectFromPool.transform.rotation = rotation;
         objectFromPool.transform.parent = null;
         objectFromPool.SetActive(true);
+
         return objectFromPool;      
     }
 

@@ -12,7 +12,7 @@ public class BoundChecker : MonoBehaviour
 
     void Awake()
     {
-        _sceneSize = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
+        _sceneSize = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height));
         _spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
