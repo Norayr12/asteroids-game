@@ -11,11 +11,6 @@ public class Projectile : MonoBehaviour //, IDestroyable
         _spriteRenderer = GetComponent<SpriteRenderer>();       
     }
 
-    public void Destroy()
-    {
-        ObjectPooler.Instance.ReturnToPool(PoolType.Projectile, gameObject);
-    }
-
     public void Initialize(ProjectileColor color, float lifeTime)
     {
         Sprite greenProjectile = GameData.Config.GreenProjectile;
@@ -32,7 +27,7 @@ public class Projectile : MonoBehaviour //, IDestroyable
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag != "Player")
+        if (collision.gameObject.tag != GameData.Config.PlayerTag)
         {
             ObjectPooler.Instance.ReturnToPool(PoolType.Projectile, gameObject);
         }

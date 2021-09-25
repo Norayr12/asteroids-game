@@ -2,14 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Asteroid : MonoBehaviour //, IDestroyable
+public class Asteroid : MonoBehaviour 
 {   
     public AsteroidType AsteroidType { get; set; } = AsteroidType.Big;
-
-    public void Destroy()
-    {
-        throw new System.NotImplementedException();
-    }
 
     public void Initialize(Vector3 scale)
     {
@@ -18,7 +13,7 @@ public class Asteroid : MonoBehaviour //, IDestroyable
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        GameController.Instance.SplitAsteroid(gameObject);
+        GameController.Instance.ContactAsteroid(gameObject, collision.gameObject.tag);
     }
 }
 

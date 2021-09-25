@@ -13,4 +13,11 @@ public class Config : ScriptableObject
 
     [Header("Asteroid shapes")]
     public Sprite[] Shapes;
+
+    [Space]
+
+    [Header("Custom tags")]
+    public string PlayerTag;
+    public string ProjectileTag;
+    public string AsteroidTag;
 }

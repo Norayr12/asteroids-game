@@ -4,32 +4,47 @@ using UnityEngine;
 
 public class AsteroidsController : MonoBehaviour
 {
+    public static List<Asteroid> ActiveAsteroids;
+
     [Header("Asteroid settings")]
     [SerializeField] private List<Vector3> _asteroidScaleByType;
     [SerializeField] private Range _speedRange;
 
-    private Dictionary<AsteroidType, Vector3> _scaleByTypeDictionary = new Dictionary<AsteroidType, Vector3>();
+    private Dictionary<AsteroidType, Vector3> _scaleByTypeDictionary;
 
-    public int RespawnedAsteroidsCount { get; set; } = 1;
-    public int AllAsteroidsCount { get; set; } = 2;
+    public int RespawnedAsteroidsCount { get; set; } = 2;
 
     private void Awake()
     {
+        ActiveAsteroids = new List<Asteroid>();
+
+        GameController.OnGameStarted += () =>
+        {
+            RespawnNewAsteroids(AsteroidType.Big, RespawnedAsteroidsCount);
+        };
+
+        GameController.OnAsteroidsDestroyed += () =>
+        {
+            if (GameController.Instance.PlayerLifes > 0)
+            {
+                ++RespawnedAsteroidsCount;               
+                RespawnNewAsteroids(AsteroidType.Big, RespawnedAsteroidsCount);
+            }
+            else
+                Debug.Log("YOU LOSE!");
+        };
+
+        _scaleByTypeDictionary = new Dictionary<AsteroidType, Vector3>();
         for (int i = 0; i <= (int)AsteroidType.Small; i++)
         {
             _scaleByTypeDictionary.Add((AsteroidType)i, _asteroidScaleByType[i]);
         }
     }
 
-    private void Start()
-    {
-        RespawnNewAsteroids(AsteroidType.Big, RespawnedAsteroidsCount);
-    }
-
     public void SplitAsteroid(GameObject asteroidObject)
     {
         Asteroid asteroid = asteroidObject.GetComponent<Asteroid>();
-        --AllAsteroidsCount;
+        ActiveAsteroids.Remove(asteroid);
 
         Quaternion leftAngle = Quaternion.Euler(0, 0, asteroidObject.transform.rotation.z - 45);
         Quaternion rightAngle = Quaternion.Euler(0, 0, asteroidObject.transform.rotation.z + 45);
@@ -38,24 +53,21 @@ public class AsteroidsController : MonoBehaviour
 
         if (asteroid.AsteroidType != AsteroidType.Small)
         {
-            AllAsteroidsCount += 2;
-
             GameObject toLeft = ObjectPooler.Instance.GetFromPool(PoolType.Asteroid, asteroidObject.transform.position, leftAngle);
             Asteroid leftAsteroid = toLeft.GetComponent<Asteroid>();
             leftAsteroid.AsteroidType = asteroid.AsteroidType + 1; 
             leftAsteroid.Initialize(_scaleByTypeDictionary[leftAsteroid.AsteroidType]);
+            ActiveAsteroids.Add(leftAsteroid);
 
             GameObject toRight = ObjectPooler.Instance.GetFromPool(PoolType.Asteroid, asteroidObject.transform.position, rightAngle);
             Asteroid rightAsteroid = toRight.GetComponent<Asteroid>();
             rightAsteroid.AsteroidType = asteroid.AsteroidType + 1;
             rightAsteroid.Initialize(_scaleByTypeDictionary[rightAsteroid.AsteroidType]);
+            ActiveAsteroids.Add(rightAsteroid);
 
             toLeft.GetComponent<Rigidbody2D>().AddForce(toLeft.transform.up * newSpeed, ForceMode2D.Impulse);
             toRight.GetComponent<Rigidbody2D>().AddForce(toRight.transform.up * newSpeed, ForceMode2D.Impulse);
         }
-        else
-            ObjectPooler.Instance.ReturnToPool(PoolType.Asteroid, asteroidObject);
-
     }
 
     private void RespawnNewAsteroids(AsteroidType type, int count)
@@ -66,6 +78,7 @@ public class AsteroidsController : MonoBehaviour
             Asteroid asteroid = asteroidObject.GetComponent<Asteroid>();
             asteroid.Initialize(_scaleByTypeDictionary[asteroid.AsteroidType]);
             asteroidObject.GetComponent<Rigidbody2D>().AddForce(asteroidObject.transform.up * Random.Range(_speedRange.Min, _speedRange.Max), ForceMode2D.Impulse);
+            ActiveAsteroids.Add(asteroid);
         }
     }
 

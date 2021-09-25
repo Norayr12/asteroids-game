@@ -66,7 +66,6 @@ public class ObjectPooler : MonoBehaviour
         pooledObject.transform.SetParent(current.Parent.transform);
         _poolDictionary[poolType].Enqueue(pooledObject);        
     }
-
 }
 
 [System.Serializable]
