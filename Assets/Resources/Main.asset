@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 116ef12aba0d39c4198822ef91e9cf3f, type: 3}
-  m_Name: Config
+  m_Name: Main
   m_EditorClassIdentifier: 
   GreenProjectile: {fileID: 21300000, guid: 8fb15ab53fd18584b885bef47e2a69e8, type: 3}
   RedProjectile: {fileID: 21300000, guid: 1e15a1a9d366e2e41b51f49b2c95088f, type: 3}

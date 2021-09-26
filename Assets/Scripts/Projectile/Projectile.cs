@@ -1,14 +1,20 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Projectile : MonoBehaviour //, IDestroyable
+[RequireComponent(typeof(SpriteRenderer))]
+public class Projectile : MonoBehaviour
 {
     private SpriteRenderer _spriteRenderer;
 
     private void Awake()
     {
-        _spriteRenderer = GetComponent<SpriteRenderer>();       
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
+    private void Start()
+    {      
+        GameController.Instance.OnGameOver += () => ObjectPooler.Instance.ReturnToPool(PoolType.Projectile, gameObject);
+        GameController.Instance.OnGameRestart += () => ObjectPooler.Instance.ReturnToPool(PoolType.Projectile, gameObject);
     }
 
     public void Initialize(ProjectileColor color, float lifeTime)

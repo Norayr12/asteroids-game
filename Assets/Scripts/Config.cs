@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Config", menuName = "")]
+[CreateAssetMenu(fileName = "Main", menuName = "Config/Main")]
 public class Config : ScriptableObject
 {
     [Header("Projectile types")]

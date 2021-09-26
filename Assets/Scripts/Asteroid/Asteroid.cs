@@ -1,10 +1,23 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Asteroid : MonoBehaviour 
 {   
     public AsteroidType AsteroidType { get; set; } = AsteroidType.Big;
+
+    private void Start()
+    {
+        GameController.Instance.OnGameOver += () =>
+        {
+            AsteroidType = AsteroidType.Big;
+            ObjectPooler.Instance.ReturnToPool(PoolType.Asteroid, gameObject);
+        };
+
+        GameController.Instance.OnGameRestart += () =>
+        {
+            AsteroidType = AsteroidType.Big;
+            ObjectPooler.Instance.ReturnToPool(PoolType.Asteroid, gameObject);
+        };
+    }
 
     public void Initialize(Vector3 scale)
     {

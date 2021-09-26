@@ -5,4 +5,5 @@ using UnityEngine;
 public static class GameData
 {
     public static Config Config;
+    public static ControlConfig ControlConfig;
 }

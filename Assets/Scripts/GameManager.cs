@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
 {
     private void Awake()
     {
-        GameData.Config = Resources.Load<Config>("Config");
+        GameData.Config = Resources.Load<Config>("Main");
+        GameData.ControlConfig = Resources.Load<ControlConfig>("Controller");
     }
 }

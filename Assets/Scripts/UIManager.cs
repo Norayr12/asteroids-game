@@ -1,8 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Unity.VisualScripting;
 
 public class UIManager : MonoBehaviour
 {
@@ -14,7 +13,11 @@ public class UIManager : MonoBehaviour
 
     [Header("Pause menu panel")]
     [SerializeField] private GameObject _pauseMenu;
-    [SerializeField] private Button _resumeButton, _restartButton, _exitButton;
+    [SerializeField] private TMP_Text _controllerTitle;
+
+    [Header("Game over panel")]
+    [SerializeField] private GameObject _gameOverMenu;
+    [SerializeField] private TMP_Text _resultScore;
 
     [Space]
 
@@ -28,38 +31,46 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        _pauseButton.onClick.AddListener( () =>
-        {
-            GameController.Instance.Pause();
-            _pauseMenu.SetActive(true);
-        });
-
-        _resumeButton.onClick.AddListener( () => 
-         {
-            GameController.Instance.Resume();
-            _pauseMenu.SetActive(false);
-         });
-
-        _restartButton.onClick.AddListener(() =>
-        {
-            GameController.Instance.Restart();
-            _pauseMenu.SetActive(false);
-        });
-
-        _exitButton.onClick.AddListener(() =>
-        {
-            GameController.Instance.GameExit();
-            _pauseMenu.SetActive(false);
-        });
+        GameController.Instance.OnGameOver += ShowGameOver;
+        GameController.Instance.OnGameRestart += ResetUI; 
 
         for (int i = 0; i < _lifes.Length; i++)
             _lifes[i].gameObject.SetActive(true);
 
-        _score.text = 0.ToString();
+        _score.text = GameController.Instance.PlayerScore.ToString();
+    }
+
+    public void ChangeController(ControllerType type)
+    {
+        _controllerTitle.text = type.ToString().ToUpper();
+    }
+
+    public void ShowGameOver()
+    {
+        _gameOverMenu.SetActive(true);
+        _resultScore.text = GameController.Instance.PlayerScore.ToString();
     }
 
     public void ShowScore(int value)
     {
         _score.text = value.ToString();
+    }
+
+    public void ShowLifes()
+    {
+        for (int i = 0; i < _lifes.Length; i++)
+            _lifes[i].gameObject.SetActive(i < GameController.Instance.PlayerLifes);
+    }
+
+    public void ResetUI()
+    {
+        ShowScore(GameController.Instance.PlayerScore);
+        ShowLifes();
+    }
+
+    public void Exit()
+    {
+        GameController.Instance.GameExit();
+        _pauseMenu.SetActive(false);
     }
 }

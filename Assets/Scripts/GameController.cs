@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System;
 
@@ -7,10 +5,12 @@ public class GameController : MonoBehaviour
 {
     public static GameController Instance;
 
-    public static Action OnGameStarted, OnAsteroidsDestroyed;
+    public event Action OnGameStarted, OnAsteroidsDestroyed, OnGameOver, OnGameRestart;
+    public event Action OnUpdate;
+    public event Action OnFixedUpdate;
 
     [Header("Controllers")]
-    [SerializeField] private PlayerController _playerController;
+    [SerializeField] private Player _playerController;
     [SerializeField] private AsteroidsController _asteroidsController;
     [SerializeField] private UFOController _UFOController;
 
@@ -25,6 +25,8 @@ public class GameController : MonoBehaviour
 
     public int PlayerScore { get; set; } = 0;
 
+    public ControllerType CurrentController { get; set; } = ControllerType.Keyboard;
+
     private void Awake()
     {
         if (Instance == null)
@@ -34,6 +36,16 @@ public class GameController : MonoBehaviour
     private void Start()
     {
         StartGame();
+    }
+
+    private void Update()
+    {
+        OnUpdate?.Invoke();
+    }
+
+    private void FixedUpdate()
+    {
+        OnFixedUpdate?.Invoke();
     }
 
     public void StartGame()
@@ -55,9 +67,7 @@ public class GameController : MonoBehaviour
         {
             _asteroidsController.SplitAsteroid(destroyedAsteroid);
             ObjectPooler.Instance.ReturnToPool(PoolType.Asteroid, destroyedAsteroid);                
-        }
-        destroyedAsteroid.GetComponent<Asteroid>().AsteroidType = AsteroidType.Big;
-
+        }      
 
         if(AsteroidsController.ActiveAsteroids.Count == 0)
         {
@@ -65,6 +75,21 @@ public class GameController : MonoBehaviour
         }
 
         IncreaseScore(_scoreAsteroidValues[(int)asteroid.AsteroidType]);
+        destroyedAsteroid.GetComponent<Asteroid>().AsteroidType = AsteroidType.Big;
+    }
+
+    public void ContactPlayer(string collisionTag)
+    {
+        if(collisionTag == GameData.Config.ProjectileTag)
+        { 
+
+        }
+        else
+        {
+            DecreaseLife();
+            if(PlayerLifes > 0)
+                _playerController.PlayerRespawn();
+        }
     }
 
     public void IncreaseScore(int value)
@@ -73,20 +98,55 @@ public class GameController : MonoBehaviour
         UIManager.Instance.ShowScore(PlayerScore);
     }
 
-    public void Pause()
+    public void DecreaseLife()
     {
-        
+        if(--PlayerLifes <= 0)
+        {
+            Pause();
+            OnGameOver?.Invoke();
+        }
+
+        UIManager.Instance.ShowLifes();
     }
 
-    public void Resume()
-    {
+    public void Pause () => Time.timeScale = 0;
 
-    }
+    public void Resume() => Time.timeScale = 1;
 
     public void Restart()
     {
+        PlayerLifes = 3;
+        PlayerScore = 0;
+        OnGameRestart?.Invoke();
+        StartGame();
+    }
+
+    public void ChangeController()
+    {
+        KeyboardController keyboard = _playerController.GetComponent<KeyboardController>();
+        MouseController mouse = _playerController.GetComponent<MouseController>();
+
+        if(CurrentController == ControllerType.Keyboard)
+        {
+            keyboard.Unsubscribe();
+            mouse.Subscribe();
+            CurrentController = ControllerType.Mouse;
+        }
+        else
+        {
+            mouse.Unsubscribe();
+            keyboard.Subscribe();
+            CurrentController = ControllerType.Keyboard;
+        }
+        UIManager.Instance.ChangeController(CurrentController);
 
     }
 
     public void GameExit() => Application.Quit();
+}
+
+public enum ControllerType
+{
+    Keyboard,
+    Mouse
 }

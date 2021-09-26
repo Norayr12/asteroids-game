@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,31 +13,26 @@ public class AsteroidsController : MonoBehaviour
 
     public int RespawnedAsteroidsCount { get; set; } = 2;
 
-    private void Awake()
+    private void Start()
     {
         ActiveAsteroids = new List<Asteroid>();
 
-        GameController.OnGameStarted += () =>
-        {
-            RespawnNewAsteroids(AsteroidType.Big, RespawnedAsteroidsCount);
-        };
+        GameController.Instance.OnGameStarted += () => RespawnNewAsteroids(AsteroidType.Big, RespawnedAsteroidsCount);
 
-        GameController.OnAsteroidsDestroyed += () =>
+        GameController.Instance.OnAsteroidsDestroyed += () =>
         {
+            print("ejje");
             if (GameController.Instance.PlayerLifes > 0)
             {
+                print("sava");
                 ++RespawnedAsteroidsCount;               
                 RespawnNewAsteroids(AsteroidType.Big, RespawnedAsteroidsCount);
             }
-            else
-                Debug.Log("YOU LOSE!");
         };
 
         _scaleByTypeDictionary = new Dictionary<AsteroidType, Vector3>();
         for (int i = 0; i <= (int)AsteroidType.Small; i++)
-        {
             _scaleByTypeDictionary.Add((AsteroidType)i, _asteroidScaleByType[i]);
-        }
     }
 
     public void SplitAsteroid(GameObject asteroidObject)
@@ -61,7 +55,7 @@ public class AsteroidsController : MonoBehaviour
 
             GameObject toRight = ObjectPooler.Instance.GetFromPool(PoolType.Asteroid, asteroidObject.transform.position, rightAngle);
             Asteroid rightAsteroid = toRight.GetComponent<Asteroid>();
-            rightAsteroid.AsteroidType = asteroid.AsteroidType + 1;
+            rightAsteroid.AsteroidType = asteroid.AsteroidType + 1;            
             rightAsteroid.Initialize(_scaleByTypeDictionary[rightAsteroid.AsteroidType]);
             ActiveAsteroids.Add(rightAsteroid);
 
