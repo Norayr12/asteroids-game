@@ -10,7 +10,7 @@ public class GameController : MonoBehaviour
     public event Action OnFixedUpdate;
 
     [Header("Controllers")]
-    [SerializeField] private Player _playerController;
+    [SerializeField] private Player _player;
     [SerializeField] private AsteroidsController _asteroidsController;
     [SerializeField] private UFOController _UFOController;
 
@@ -21,7 +21,9 @@ public class GameController : MonoBehaviour
     [Header("Score for UFO")]
     [SerializeField] private int _scoreUFO;
 
-    public int PlayerLifes { get; set; } = 3;
+    public Player Player { get { return _player; } }
+
+    public int PlayerLifes { get; set; }
 
     public int PlayerScore { get; set; } = 0;
 
@@ -35,6 +37,7 @@ public class GameController : MonoBehaviour
 
     private void Start()
     {
+        PlayerLifes = GameData.PlayerConfig.PlayerMaxLifes;
         StartGame();
     }
 
@@ -53,7 +56,7 @@ public class GameController : MonoBehaviour
         OnGameStarted?.Invoke();
     }
 
-    public void ContactAsteroid(GameObject destroyedAsteroid, string collisionTag)
+    public void OnDestroyAsteroid(GameObject destroyedAsteroid, string collisionTag)
     {
         Asteroid asteroid = destroyedAsteroid.GetComponent<Asteroid>();
         AsteroidsController.ActiveAsteroids.Remove(asteroid);
@@ -78,19 +81,24 @@ public class GameController : MonoBehaviour
         destroyedAsteroid.GetComponent<Asteroid>().AsteroidType = AsteroidType.Big;
     }
 
-    public void ContactPlayer(string collisionTag)
+    public void OnDestroyPlayer()
     {
-        if(collisionTag == GameData.Config.ProjectileTag)
-        { 
-
-        }
-        else
-        {
-            DecreaseLife();
-            if(PlayerLifes > 0)
-                _playerController.PlayerRespawn();
-        }
+        DecreaseLife();
+        if(PlayerLifes > 0)
+            _player.PlayerRespawn();      
     }
+
+    public void OnDestroyUFO(GameObject destroyed, string collisionTag)
+    {
+        if (collisionTag == GameData.Config.ProjectileTag)
+            IncreaseScore(_scoreUFO);
+
+        ObjectPooler.Instance.ReturnToPool(PoolType.UFO, destroyed);
+
+        _UFOController.RespawnUFO();
+    }
+
+    public void OnUfoOutOfBounds() => _UFOController.RespawnUFO();
 
     public void IncreaseScore(int value)
     {
@@ -123,8 +131,8 @@ public class GameController : MonoBehaviour
 
     public void ChangeController()
     {
-        KeyboardController keyboard = _playerController.GetComponent<KeyboardController>();
-        MouseController mouse = _playerController.GetComponent<MouseController>();
+        KeyboardController keyboard = _player.GetComponent<KeyboardController>();
+        MouseController mouse = _player.GetComponent<MouseController>();
 
         if(CurrentController == ControllerType.Keyboard)
         {

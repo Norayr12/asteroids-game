@@ -18,4 +18,8 @@ public class Config : ScriptableObject
     public string PlayerTag;
     public string ProjectileTag;
     public string AsteroidTag;
+
+    [Header("Custom layers")]
+    public readonly int RedProjectileLayer = 8;
+    public readonly int GreenProjectileLayer = 7;
 }

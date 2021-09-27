@@ -25,7 +25,7 @@ public class Asteroid : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        GameController.Instance.ContactAsteroid(gameObject, collision.gameObject.tag);
+        GameController.Instance.OnDestroyAsteroid(gameObject, collision.gameObject.tag);
     }
 }
 

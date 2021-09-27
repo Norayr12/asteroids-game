@@ -10,13 +10,13 @@ public class BoundChecker : MonoBehaviour
     private Vector2 _sceneSize;
     private SpriteRenderer _spriteRenderer;
 
-    void Awake()
+    private void Awake()
     {
         _sceneSize = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height));
         _spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         if (transform.position.x - _spriteRenderer.bounds.size.x / 2 > _sceneSize.x)
         {
@@ -53,6 +53,8 @@ public class BoundChecker : MonoBehaviour
 
     }
 
+    public void SetObjectType(OutOfBoundsObjectType objectType) => _objectType = objectType;
+
     private void Teleport(BoundType boundType)
     {
         switch (boundType)
@@ -77,6 +79,9 @@ public class BoundChecker : MonoBehaviour
 
     private void Destroy()
     {
+        if (_poolType == PoolType.UFO)
+            GameController.Instance.OnUfoOutOfBounds();
+
         ObjectPooler.Instance.ReturnToPool(_poolType, gameObject);
     }
 }

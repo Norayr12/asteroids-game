@@ -32,7 +32,11 @@ public class Player : MonoBehaviour
         _animator.SetTrigger("Invulnerability");
     }
 
-    private void OnGameStart() => _animator.SetTrigger("Invulnerability");
+    private void OnGameStart()
+    {
+        _animator.SetTrigger("Invulnerability");
+    }
+
     private void OnGameOverRestart() => PlayerReset();
 
     private void PlayerReset()
@@ -44,7 +48,7 @@ public class Player : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        GameController.Instance.ContactPlayer(collision.gameObject.tag);
+        GameController.Instance.OnDestroyPlayer();
     }
 
 }

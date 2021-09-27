@@ -1,14 +1,16 @@
 using System.Collections;
 using UnityEngine;
 
-[RequireComponent(typeof(SpriteRenderer))]
+[RequireComponent(typeof(SpriteRenderer), typeof(BoundChecker))]
 public class Projectile : MonoBehaviour
 {
     private SpriteRenderer _spriteRenderer;
+    private BoundChecker _boundChecker;
 
     private void Awake()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
+        _boundChecker = GetComponent<BoundChecker>();
     }
 
     private void Start()
@@ -19,20 +21,29 @@ public class Projectile : MonoBehaviour
     }
 
     public void Initialize(ProjectileColor color, float lifeTime)
-    {
+    {        
         Sprite greenProjectile = GameData.Config.GreenProjectile;
         Sprite redProjectile = GameData.Config.RedProjectile;
-        _spriteRenderer.sprite = color == ProjectileColor.Green ? greenProjectile : redProjectile;
-        StartCoroutine(LifeTimer(lifeTime));
-    }
 
+        _spriteRenderer.sprite = color == ProjectileColor.Green ? greenProjectile : redProjectile;
+        gameObject.layer = color == ProjectileColor.Green ? GameData.Config.GreenProjectileLayer : GameData.Config.RedProjectileLayer;
+        
+        if (gameObject.layer == GameData.Config.GreenProjectileLayer)
+        {
+            _boundChecker.SetObjectType(OutOfBoundsObjectType.Teleportable);
+            StartCoroutine(LifeTimer(lifeTime));
+        }
+        else
+        {
+            _boundChecker.SetObjectType(OutOfBoundsObjectType.Destroyable);
+        }
+    }
 
     private void OnGameOverRestart()
     {
         if (!ObjectPooler.Instance.Exist(PoolType.Projectile, gameObject))
             ObjectPooler.Instance.ReturnToPool(PoolType.Projectile, gameObject);
     }
-
 
     private IEnumerator LifeTimer(float lifeTime)
     {
@@ -42,10 +53,6 @@ public class Projectile : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag != GameData.Config.PlayerTag)
-        {
-            ObjectPooler.Instance.ReturnToPool(PoolType.Projectile, gameObject);
-        }
+        ObjectPooler.Instance.ReturnToPool(PoolType.Projectile, gameObject);
     }
-
 }

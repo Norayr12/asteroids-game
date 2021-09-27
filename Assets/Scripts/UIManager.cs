@@ -31,8 +31,9 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        GameController.Instance.OnGameOver += ShowGameOver;
-        GameController.Instance.OnGameRestart += ResetUI; 
+        GameController.Instance.OnUpdate += OnUpdate;
+        GameController.Instance.OnGameOver += OnGameOver;
+        GameController.Instance.OnGameRestart += OnGameRestart; 
 
         for (int i = 0; i < _lifes.Length; i++)
             _lifes[i].gameObject.SetActive(true);
@@ -43,12 +44,6 @@ public class UIManager : MonoBehaviour
     public void ChangeController(ControllerType type)
     {
         _controllerTitle.text = type.ToString().ToUpper();
-    }
-
-    public void ShowGameOver()
-    {
-        _gameOverMenu.SetActive(true);
-        _resultScore.text = GameController.Instance.PlayerScore.ToString();
     }
 
     public void ShowScore(int value)
@@ -62,15 +57,24 @@ public class UIManager : MonoBehaviour
             _lifes[i].gameObject.SetActive(i < GameController.Instance.PlayerLifes);
     }
 
-    public void ResetUI()
+    private void OnGameOver()
+    {
+        _gameOverMenu.SetActive(true);
+        _resultScore.text = GameController.Instance.PlayerScore.ToString();
+    }
+
+    private void OnUpdate()
+    {
+        if(Time.timeScale != 0 && Input.GetKeyDown(GameData.UIConfig.PauseButton))
+        {
+            GameController.Instance.Pause();
+            _pauseMenu.SetActive(true);
+        }
+    }
+
+    private void OnGameRestart()
     {
         ShowScore(GameController.Instance.PlayerScore);
         ShowLifes();
-    }
-
-    public void Exit()
-    {
-        GameController.Instance.GameExit();
-        _pauseMenu.SetActive(false);
     }
 }

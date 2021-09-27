@@ -15,6 +15,7 @@ public class ShootingController : MonoBehaviour
         projectile.Initialize(_color, _lifeTime);
         projectileObject.GetComponent<Rigidbody2D>().AddForce(projectileObject.transform.up * _speed, ForceMode2D.Impulse);
     }
+
 }
 
 public enum ProjectileColor
