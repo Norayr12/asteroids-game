@@ -10,5 +10,6 @@ public class DataLoader: MonoBehaviour
         GameData.ControlConfig = Resources.Load<ControlConfig>("Controller");
         GameData.UIConfig = Resources.Load<UIConfig>("UI");
         GameData.PlayerConfig = Resources.Load<PlayerConfig>("Player");
+        GameData.SoundConfig = Resources.Load<SoundConfig>("SFX");
     }
 }

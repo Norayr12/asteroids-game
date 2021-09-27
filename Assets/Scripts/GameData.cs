@@ -8,4 +8,5 @@ public static class GameData
     public static ControlConfig ControlConfig;
     public static UIConfig UIConfig;
     public static PlayerConfig PlayerConfig;
+    public static SoundConfig SoundConfig;
 }

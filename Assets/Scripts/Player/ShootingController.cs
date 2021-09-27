@@ -14,6 +14,7 @@ public class ShootingController : MonoBehaviour
         Projectile projectile = projectileObject.GetComponent<Projectile>();
         projectile.Initialize(_color, _lifeTime);
         projectileObject.GetComponent<Rigidbody2D>().AddForce(projectileObject.transform.up * _speed, ForceMode2D.Impulse);
+        AudioManager.Instance.PlaySound(GameData.SoundConfig.ShootSound);
     }
 
 }

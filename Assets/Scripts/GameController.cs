@@ -79,13 +79,17 @@ public class GameController : MonoBehaviour
 
         IncreaseScore(_scoreAsteroidValues[(int)asteroid.AsteroidType]);
         destroyedAsteroid.GetComponent<Asteroid>().AsteroidType = AsteroidType.Big;
+
+        AudioManager.Instance.PlaySound(GameData.SoundConfig.ExplosionSound);
     }
 
     public void OnDestroyPlayer()
     {
         DecreaseLife();
         if(PlayerLifes > 0)
-            _player.PlayerRespawn();      
+            _player.PlayerRespawn();
+
+        AudioManager.Instance.PlaySound(GameData.SoundConfig.ExplosionSound);
     }
 
     public void OnDestroyUFO(GameObject destroyed, string collisionTag)
@@ -96,6 +100,8 @@ public class GameController : MonoBehaviour
         ObjectPooler.Instance.ReturnToPool(PoolType.UFO, destroyed);
 
         _UFOController.RespawnUFO();
+
+        AudioManager.Instance.PlaySound(GameData.SoundConfig.ExplosionSound);
     }
 
     public void OnUfoOutOfBounds() => _UFOController.RespawnUFO();

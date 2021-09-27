@@ -16,7 +16,14 @@ public class MouseController : PlayerController
     protected override void OnFixedUpdate()
     {
         if (Input.GetKey(GameData.ControlConfig.MouseForward) || Input.GetKey(GameData.ControlConfig.KeyboardForward))
+        {
             AddForce();
+            AudioManager.Instance.PlayEngine();
+        }
+        else
+        {
+            AudioManager.Instance.StopEngine();
+        }
 
         Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 

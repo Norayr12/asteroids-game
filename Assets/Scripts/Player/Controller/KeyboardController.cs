@@ -20,6 +20,11 @@ public class KeyboardController : PlayerController
         if (Input.GetKey(GameData.ControlConfig.KeyboardForward))
         {         
             AddForce();
+            AudioManager.Instance.PlayEngine();
+        }
+        else
+        {
+            AudioManager.Instance.StopEngine();
         }
 
         if (Input.GetKey(GameData.ControlConfig.RotateRight))

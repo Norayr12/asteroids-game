@@ -14,7 +14,7 @@ public abstract class PlayerController : MonoBehaviour
     protected virtual void Awake()
     {
         PlayerRigidbody = GetComponent<Rigidbody2D>();
-        ShootingController = GetComponent<ShootingController>();       
+        ShootingController = GetComponent<ShootingController>();
     }
 
     protected virtual void Start()
@@ -40,10 +40,11 @@ public abstract class PlayerController : MonoBehaviour
 
     protected void AddForce()
     {
-        if (PlayerRigidbody.velocity.magnitude <= MaxSpeed)
+        if (PlayerRigidbody.velocity.magnitude <= MaxSpeed)       
             PlayerRigidbody.AddForce(transform.up * Speed, ForceMode2D.Force);
-        else
+        else      
             PlayerRigidbody.velocity = PlayerRigidbody.velocity.normalized * MaxSpeed;
+
     }
 
     protected void RotateLeft() => transform.Rotate(0, 0, 1 * RotationSpeed);
