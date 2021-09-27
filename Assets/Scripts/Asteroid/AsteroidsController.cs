@@ -17,18 +17,9 @@ public class AsteroidsController : MonoBehaviour
     {
         ActiveAsteroids = new List<Asteroid>();
 
-        GameController.Instance.OnGameStarted += () => RespawnNewAsteroids(AsteroidType.Big, RespawnedAsteroidsCount);
-
-        GameController.Instance.OnAsteroidsDestroyed += () =>
-        {
-            print("ejje");
-            if (GameController.Instance.PlayerLifes > 0)
-            {
-                print("sava");
-                ++RespawnedAsteroidsCount;               
-                RespawnNewAsteroids(AsteroidType.Big, RespawnedAsteroidsCount);
-            }
-        };
+        GameController.Instance.OnGameStarted += OnGameStart;
+        GameController.Instance.OnAsteroidsDestroyed += OnAsteroidsDestroy;
+        GameController.Instance.OnGameRestart += OnGameRestart;
 
         _scaleByTypeDictionary = new Dictionary<AsteroidType, Vector3>();
         for (int i = 0; i <= (int)AsteroidType.Small; i++)
@@ -49,13 +40,13 @@ public class AsteroidsController : MonoBehaviour
         {
             GameObject toLeft = ObjectPooler.Instance.GetFromPool(PoolType.Asteroid, asteroidObject.transform.position, leftAngle);
             Asteroid leftAsteroid = toLeft.GetComponent<Asteroid>();
-            leftAsteroid.AsteroidType = asteroid.AsteroidType + 1; 
+            leftAsteroid.AsteroidType = asteroid.AsteroidType + 1;
             leftAsteroid.Initialize(_scaleByTypeDictionary[leftAsteroid.AsteroidType]);
             ActiveAsteroids.Add(leftAsteroid);
 
             GameObject toRight = ObjectPooler.Instance.GetFromPool(PoolType.Asteroid, asteroidObject.transform.position, rightAngle);
             Asteroid rightAsteroid = toRight.GetComponent<Asteroid>();
-            rightAsteroid.AsteroidType = asteroid.AsteroidType + 1;            
+            rightAsteroid.AsteroidType = asteroid.AsteroidType + 1;
             rightAsteroid.Initialize(_scaleByTypeDictionary[rightAsteroid.AsteroidType]);
             ActiveAsteroids.Add(rightAsteroid);
 
@@ -63,6 +54,27 @@ public class AsteroidsController : MonoBehaviour
             toRight.GetComponent<Rigidbody2D>().AddForce(toRight.transform.up * newSpeed, ForceMode2D.Impulse);
         }
     }
+
+    private void OnGameStart()
+    {
+        RespawnNewAsteroids(AsteroidType.Big, RespawnedAsteroidsCount);
+    }
+
+    private void OnGameRestart()
+    {
+        ActiveAsteroids = new List<Asteroid>();
+        RespawnedAsteroidsCount = 2;
+    }
+
+    private void OnAsteroidsDestroy()
+    {
+        if (GameController.Instance.PlayerLifes > 0)
+        {
+            ++RespawnedAsteroidsCount;
+            RespawnNewAsteroids(AsteroidType.Big, RespawnedAsteroidsCount);
+        }
+    }
+
 
     private void RespawnNewAsteroids(AsteroidType type, int count)
     {

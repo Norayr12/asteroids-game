@@ -18,12 +18,11 @@ public class Player : MonoBehaviour
     {
         _startPos = transform.position;
 
-        GameController.Instance.OnGameStarted += () =>
-        {
-            _animator.SetTrigger("Invulnerability");
-        };
+        GameController.Instance.OnGameStarted += OnGameStart;
 
-        GameController.Instance.OnGameOver += PlayerReset;
+        GameController.Instance.OnGameOver += OnGameOverRestart;
+
+        GameController.Instance.OnGameRestart += OnGameOverRestart;
     }
 
 
@@ -32,6 +31,9 @@ public class Player : MonoBehaviour
         PlayerReset();
         _animator.SetTrigger("Invulnerability");
     }
+
+    private void OnGameStart() => _animator.SetTrigger("Invulnerability");
+    private void OnGameOverRestart() => PlayerReset();
 
     private void PlayerReset()
     {

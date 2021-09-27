@@ -1,9 +1,7 @@
-using System.Collections;
 using UnityEngine;
 
 public class MouseController : PlayerController
 {
-
     protected override void Start()
     {
         base.Start();       

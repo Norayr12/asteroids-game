@@ -64,6 +64,11 @@ public class ObjectPooler : MonoBehaviour
         pooledObject.transform.SetParent(current.Parent.transform);
         _poolDictionary[poolType].Enqueue(pooledObject);        
     }
+
+    public bool Exist(PoolType poolType, GameObject pooledObject)
+    {
+        return _poolDictionary[poolType].Contains(pooledObject);
+    }
 }
 
 [System.Serializable]

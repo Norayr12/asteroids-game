@@ -12,4 +12,6 @@ public class UFO : MonoBehaviour
         GameController.Instance.OnGameOver += () => ObjectPooler.Instance.ReturnToPool(PoolType.UFO, gameObject);
         GameController.Instance.OnGameRestart += () => ObjectPooler.Instance.ReturnToPool(PoolType.Projectile, gameObject);
     }
+
+    private void OnGameOverRestart() => ObjectPooler.Instance.ReturnToPool(PoolType.UFO, gameObject);
 }

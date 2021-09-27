@@ -6,8 +6,7 @@ public class KeyboardController : PlayerController
     {
         base.Start();
 
-        GameController.Instance.OnUpdate += OnUpdate;
-        GameController.Instance.OnFixedUpdate += OnFixedUpdate;
+        Subscribe();
     }
 
     protected override void OnUpdate()

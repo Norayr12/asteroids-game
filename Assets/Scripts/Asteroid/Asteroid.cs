@@ -6,22 +6,21 @@ public class Asteroid : MonoBehaviour
 
     private void Start()
     {
-        GameController.Instance.OnGameOver += () =>
-        {
-            AsteroidType = AsteroidType.Big;
-            ObjectPooler.Instance.ReturnToPool(PoolType.Asteroid, gameObject);
-        };
-
-        GameController.Instance.OnGameRestart += () =>
-        {
-            AsteroidType = AsteroidType.Big;
-            ObjectPooler.Instance.ReturnToPool(PoolType.Asteroid, gameObject);
-        };
+        GameController.Instance.OnGameOver += OnGameOverRestart;
+       
+        GameController.Instance.OnGameRestart += OnGameOverRestart;
     }
 
     public void Initialize(Vector3 scale)
     {
         transform.localScale = scale;
+    }
+
+    private void OnGameOverRestart()
+    {
+        AsteroidType = AsteroidType.Big;
+        if (!ObjectPooler.Instance.Exist(PoolType.Asteroid, gameObject))
+            ObjectPooler.Instance.ReturnToPool(PoolType.Asteroid, gameObject);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

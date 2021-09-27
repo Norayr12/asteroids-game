@@ -12,9 +12,10 @@ public class Projectile : MonoBehaviour
     }
 
     private void Start()
-    {      
-        GameController.Instance.OnGameOver += () => ObjectPooler.Instance.ReturnToPool(PoolType.Projectile, gameObject);
-        GameController.Instance.OnGameRestart += () => ObjectPooler.Instance.ReturnToPool(PoolType.Projectile, gameObject);
+    {
+        GameController.Instance.OnGameOver += OnGameOverRestart;
+
+        GameController.Instance.OnGameRestart += OnGameOverRestart;
     }
 
     public void Initialize(ProjectileColor color, float lifeTime)
@@ -24,6 +25,14 @@ public class Projectile : MonoBehaviour
         _spriteRenderer.sprite = color == ProjectileColor.Green ? greenProjectile : redProjectile;
         StartCoroutine(LifeTimer(lifeTime));
     }
+
+
+    private void OnGameOverRestart()
+    {
+        if (!ObjectPooler.Instance.Exist(PoolType.Projectile, gameObject))
+            ObjectPooler.Instance.ReturnToPool(PoolType.Projectile, gameObject);
+    }
+
 
     private IEnumerator LifeTimer(float lifeTime)
     {
