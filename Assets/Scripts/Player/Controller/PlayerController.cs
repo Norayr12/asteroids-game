@@ -36,7 +36,11 @@ public abstract class PlayerController : MonoBehaviour
         GameController.Instance.OnFixedUpdate += OnFixedUpdate;
     }
 
-    protected void Shoot () => ShootingController.Shoot();
+    protected void Shoot()
+    {
+        if(!GameController.Instance.IsStoped)
+            ShootingController.Shoot();
+    }
 
     protected void AddForce()
     {

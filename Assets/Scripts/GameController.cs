@@ -29,6 +29,8 @@ public class GameController : MonoBehaviour
 
     public ControllerType CurrentController { get; set; } = ControllerType.Keyboard;
 
+    public bool IsStoped { get; set; }
+
     private void Awake()
     {
         if (Instance == null)
@@ -126,11 +128,16 @@ public class GameController : MonoBehaviour
 
     public void Pause()
     {
+        IsStoped = true;
         AudioManager.Instance.StopEngine();
         Time.timeScale = 0;
     }
 
-    public void Resume() => Time.timeScale = 1;
+    public void Resume()
+    {
+        IsStoped = false;
+        Time.timeScale = 1;
+    }
 
     public void Restart()
     {
