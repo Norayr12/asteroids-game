@@ -117,13 +117,18 @@ public class GameController : MonoBehaviour
         if(--PlayerLifes <= 0)
         {
             Pause();
+            AudioManager.Instance.StopEngine();
             OnGameOver?.Invoke();
         }
 
         UIManager.Instance.ShowLifes();
     }
 
-    public void Pause () => Time.timeScale = 0;
+    public void Pause()
+    {
+        AudioManager.Instance.StopEngine();
+        Time.timeScale = 0;
+    }
 
     public void Resume() => Time.timeScale = 1;
 
