@@ -7,6 +7,7 @@ public class AsteroidsController : MonoBehaviour
 
     [Header("Asteroid settings")]
     [SerializeField] private List<Vector3> _asteroidScaleByType;
+    [SerializeField] private float _spawnAngle;
     [SerializeField] private Range _speedRange;
 
     private Dictionary<AsteroidType, Vector3> _scaleByTypeDictionary;
@@ -31,8 +32,8 @@ public class AsteroidsController : MonoBehaviour
         Asteroid asteroid = asteroidObject.GetComponent<Asteroid>();
         ActiveAsteroids.Remove(asteroid);
 
-        Quaternion leftAngle = Quaternion.Euler(0, 0, asteroidObject.transform.rotation.z - 45);
-        Quaternion rightAngle = Quaternion.Euler(0, 0, asteroidObject.transform.rotation.z + 45);
+        Quaternion leftAngle = Quaternion.Euler(0, 0, asteroidObject.transform.rotation.z - _spawnAngle);
+        Quaternion rightAngle = Quaternion.Euler(0, 0, asteroidObject.transform.rotation.z + _spawnAngle);
 
         float newSpeed = Random.Range(_speedRange.Min, _speedRange.Max);
 
